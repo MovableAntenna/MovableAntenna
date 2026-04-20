@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硬件实现 · 双天线协同感知</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <a href="index.html">首页</a>
+            <a href="system.html">系统设计</a>
+            <a href="hardware.html" class="active">硬件实现</a>
+            <a href="experiments.html">实验测试</a>
+            <a href="publications.html">论文</a>
+        </nav>
+
+        <header class="page-header">
+            <h1>硬件系统实现</h1>
+            <p class="subhead">电路 · 结构 · 实物</p>
+        </header>
+
+        <!-- 实物照片画廊 -->
+        <section class="section">
+            <h2 class="section-title">实物展示</h2>
+            <div class="image-gallery">
+                <img src="assets/images/hardware-overall.jpg" alt="整体系统实物">
+                <img src="assets/images/hardware-rail.jpg" alt="导轨与天线特写">
+                <img src="assets/images/hardware-circuit.jpg" alt="主控与驱动电路">
+                <img src="assets/images/hardware-servo.jpg" alt="舵机云台细节">
+            </div>
+            <p class="caption">导轨行程300mm，搭载发射/接收天线，舵机提供俯仰与方位微调。</p>
+        </section>
+
+        <!-- 电路原理图 -->
+        <section class="section">
+            <h2 class="section-title">电路设计</h2>
+            <div class="circuit-row">
+                <div>
+                    <h3>射频前端</h3>
+                    <img src="assets/images/circuit-rf.png" alt="射频前端电路图">
+                    <p>基于A7105/CC2500的2.4GHz收发链路，发射功率可调，接收带LNA与RSSI输出。</p>
+                </div>
+                <div>
+                    <h3>主控单元</h3>
+                    <img src="assets/images/circuit-mcu.png" alt="主控电路图">
+                    <p>STM32F103C8T6最小系统，负责ADC采样、控制算法运算及PWM输出。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 机械结构 -->
+        <section class="section">
+            <h2 class="section-title">机械结构设计</h2>
+            <img src="assets/images/mechanical-cad.png" alt="三维爆炸视图" class="full-width-img">
+            <p class="caption">SolidWorks 设计的导轨滑块组件、天线支架与舵机云台一体化装配。</p>
+        </section>
+
+        <!-- 关键器件清单 -->
+        <section class="section">
+            <h2 class="section-title">主要器件清单</h2>
+            <table class="data-table">
+                <tr><th>器件</th><th>型号/参数</th><th>数量</th></tr>
+                <tr><td>主控MCU</td><td>STM32F103C8T6</td><td>1</td></tr>
+                <tr><td>射频收发芯片</td><td>A7105 (2.4GHz)</td><td>2</td></tr>
+                <tr><td>舵机</td><td>MG996R (180°, 11kg·cm)</td><td>2</td></tr>
+                <tr><td>步进电机</td><td>42步进 + A4988驱动</td><td>1</td></tr>
+                <tr><td>直线导轨</td><td>MGN12H (300mm)</td><td>1</td></tr>
+                <tr><td>天线</td><td>2.4GHz 3dBi 胶棒天线</td><td>2</td></tr>
+            </table>
+        </section>
+
+        <footer class="footer">
+            <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
+        </footer>
+    </div>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
