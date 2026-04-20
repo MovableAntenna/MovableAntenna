@@ -1,131 +1,111 @@
+/**
+ * 全局交互脚本 main.js
+ * 适用于所有页面：导航栏动态效果、卡片淡入、平滑滚动、模型监听等
+ */
+
 (function() {
-    // 图片映射表：data-image 属性值 → 实际图片路径
-    const imageMap = {
-        'overall': 'assets/images/hardware-overall.jpg',
-        'rail': 'assets/images/hardware-rail.jpg',
-        'circuit': 'assets/images/hardware-circuit.jpg',
-        'servo': 'assets/images/hardware-servo.jpg'
-    };
-    
-    // 获取右侧预览图片元素
-    let previewImg = document.getElementById('previewImage');
-    const items = document.querySelectorAll('.spec-item');
-    
-    // 预加载所有图片，提升切换流畅度
-    Object.values(imageMap).forEach(src => {
-        const img = new Image();
-        img.src = src;
-    });
-    
-    /**
-     * 切换右侧大图（带淡入淡出效果）
-     * @param {string} imageKey - 图片键名，对应 imageMap 中的 key
-     */
-    function switchImage(imageKey) {
-        const targetSrc = imageMap[imageKey];
-        if (!targetSrc) return;
-        
-        // 创建新图片元素
-        const newImg = new Image();
-        newImg.src = targetSrc;
-        newImg.alt = previewImg ? previewImg.alt : '';
-        newImg.className = 'preview-image';
-        newImg.style.opacity = '0';
-        
-        newImg.onload = () => {
-            const container = previewImg.parentNode;
-            container.appendChild(newImg);
-            
-            // 淡入新图片
-            requestAnimationFrame(() => {
-                newImg.style.transition = 'opacity 0.3s ease';
-                newImg.style.opacity = '1';
-            });
-            
-            // 淡出并移除旧图片
-            if (previewImg && previewImg !== newImg) {
-                previewImg.style.transition = 'opacity 0.2s ease';
-                previewImg.style.opacity = '0';
-                setTimeout(() => {
-                    if (previewImg.parentNode === container) {
-                        container.removeChild(previewImg);
-                    }
-                }, 200);
-            }
-            
-            // 更新全局预览图片引用
-            if (document.getElementById('previewImage')) {
-                document.getElementById('previewImage').removeAttribute('id');
-            }
-            newImg.id = 'previewImage';
-            previewImg = newImg;
-        };
-    }
-    
-    /**
-     * 更新所有选项的图标符号（+ 或 −）
-     */
-    function updateIcons() {
-        items.forEach(item => {
-            const icon = item.querySelector('.icon-circle');
-            if (icon) {
-                icon.textContent = item.classList.contains('expanded') ? '−' : '+';
-            }
-        });
-    }
-    
-    /**
-     * 收起所有展开的项（除了当前项）
-     * @param {HTMLElement} currentItem - 当前点击的项，不会被收起
-     */
-    function collapseOthers(currentItem) {
-        items.forEach(item => {
-            if (item !== currentItem && item.classList.contains('expanded')) {
-                item.classList.remove('expanded');
-            }
-        });
-    }
-    
-    // 为每个选项绑定点击事件
-    items.forEach(item => {
-        const trigger = item.querySelector('.spec-trigger');
-        const imageKey = item.dataset.image;
-        
-        trigger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            
-            const isExpanded = item.classList.contains('expanded');
-            
-            // 先收起其他展开的项（不会造成卡顿，因为 CSS 过渡正常执行）
-            collapseOthers(item);
-            
-            // 切换当前项的展开/收起状态
-            if (!isExpanded) {
-                item.classList.add('expanded');
-                // 切换右侧图片
-                if (imageKey) {
-                    switchImage(imageKey);
+    'use strict';
+
+    // ---------- 导航栏滚动效果：滚动时加深背景 ----------
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        // 检查导航栏是否使用了液态玻璃样式（通过背景色判断）
+        const isGlassNav = window.getComputedStyle(navbar).backdropFilter !== 'none' || 
+                          window.getComputedStyle(navbar).webkitBackdropFilter !== 'none';
+
+        if (isGlassNav) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.65)';
+                    navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.4)';
+                    navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.05)';
                 }
-            } else {
-                item.classList.remove('expanded');
-                // 如果收起当前项，图片保持不变（或可切换为默认图，此处保持最后显示的图片）
-            }
-            
-            // 更新所有图标符号
-            updateIcons();
-        });
-    });
-    
-    // 初始化：默认展开第一项，并显示对应图片
-    const firstItem = document.querySelector('.spec-item');
-    if (firstItem) {
-        // 确保初始状态正确（移除可能残留的 expanded 类）
-        items.forEach(item => item.classList.remove('expanded'));
-        firstItem.classList.add('expanded');
-        updateIcons();
-        const firstImageKey = firstItem.dataset.image;
-        if (firstImageKey) {
-            switchImage(firstImageKey);
+            });
         }
     }
+
+    // ---------- 卡片交错误入动画 (Intersection Observer) ----------
+    const animatedElements = document.querySelectorAll('.card, .feature-item, .comparison-card, .flow-node, .spec-item');
+    
+    if (animatedElements.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    // 可选：取消观察以节省性能
+                    // observer.unobserve(entry.target);
+                }
+            });
+        }, { 
+            threshold: 0.1, 
+            rootMargin: '0px 0px -20px 0px' 
+        });
+
+        animatedElements.forEach(el => {
+            // 设置初始隐藏状态（如果尚未定义）
+            const currentOpacity = window.getComputedStyle(el).opacity;
+            const currentTransform = window.getComputedStyle(el).transform;
+            // 避免覆盖已有内联样式，仅在未设置时添加
+            if (currentOpacity === '1' && (currentTransform === 'none' || currentTransform === 'matrix(1, 0, 0, 1, 0, 0)')) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            }
+            observer.observe(el);
+        });
+    }
+
+    // ---------- 平滑滚动：处理锚点链接 ----------
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === '#' || href === '') return;
+            
+            const targetElement = document.querySelector(href);
+            if (targetElement) {
+                e.preventDefault();
+                targetElement.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // ---------- model-viewer 加载状态监听（首页 3D 模型）----------
+    const modelViewer = document.querySelector('model-viewer');
+    if (modelViewer) {
+        modelViewer.addEventListener('load', () => {
+            console.log('✅ 3D 模型加载完成');
+        });
+        modelViewer.addEventListener('error', (error) => {
+            console.warn('⚠️ 3D 模型加载失败:', error);
+            // 可在此显示友好提示
+        });
+    }
+
+    // ---------- 页面完全加载后的细微效果 ----------
+    window.addEventListener('load', () => {
+        document.body.classList.add('loaded');
+        
+        // 为图片添加渐进加载效果（可选）
+        const images = document.querySelectorAll('img:not(.preview-image)');
+        images.forEach(img => {
+            if (!img.complete) {
+                img.style.opacity = '0';
+                img.style.transition = 'opacity 0.4s ease';
+                img.addEventListener('load', () => {
+                    img.style.opacity = '1';
+                });
+            }
+        });
+    });
+
+    // ---------- 辅助：处理滚动吸附时的导航栏遮挡（scroll-margin 已在 CSS 中定义）----------
+    // 此部分无需额外代码，由 CSS scroll-margin-top 处理
+
 })();
