@@ -6,108 +6,138 @@
     <title>硬件实现 · 双天线协同感知</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* 硬件页特有的左右分栏布局样式 */
-        .hardware-showcase {
+        /* 硬件页特有样式：极简、左右分栏、折叠卡片 */
+        .hardware-layout {
             display: flex;
-            gap: 40px;
-            margin: 40px 0;
+            gap: 60px;
+            margin: 60px 0 80px;
             align-items: flex-start;
         }
         
-        .gallery-controls {
-            flex: 0 0 240px;
+        /* 左侧选项区 */
+        .spec-list {
+            flex: 0 0 300px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 2px;
         }
         
-        .gallery-btn {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 16px;
-            padding: 18px 20px;
-            text-align: left;
-            font-size: 1.1rem;
+        .spec-item {
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        
+        .spec-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 0;
+            font-size: 1.3rem;
             font-weight: 500;
             color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: all 0.25s ease;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
         }
         
-        .gallery-btn:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateX(4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            border-color: var(--primary);
+        .spec-trigger:hover {
+            color: var(--primary);
         }
         
-        .gallery-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0,113,227,0.2);
+        .spec-trigger .plus-icon {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+            width: 28px;
+            text-align: center;
         }
         
-        .gallery-btn .btn-subtitle {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 400;
-            opacity: 0.7;
-            margin-top: 4px;
+        .spec-item.expanded .plus-icon {
+            transform: rotate(45deg);
+            color: var(--primary);
         }
         
-        .gallery-btn.active .btn-subtitle {
-            opacity: 0.9;
-        }
-        
-        .gallery-display {
+        .spec-trigger .label {
             flex: 1;
-            min-height: 450px;
-            background: var(--bg-light);
-            border-radius: 28px;
+        }
+        
+        .spec-content {
+            max-height: 0;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
-            border: 1px solid var(--border-light);
+            transition: max-height 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+            padding-left: 40px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .spec-item.expanded .spec-content {
+            max-height: 150px;  /* 足够容纳描述文字 */
+            padding-bottom: 16px;
+        }
+        
+        /* 右侧图片区 */
+        .spec-preview {
+            flex: 1;
+            min-height: 520px;
+            background: #fafafa;
+            border-radius: 32px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
         }
         
-        .gallery-image {
+        .preview-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            border-radius: 16px;
+            padding: 20px;
             transition: opacity 0.3s ease;
-            opacity: 1;
         }
         
-        .gallery-image.fade-out {
-            opacity: 0;
+        /* 大标题与首页 hero 一致 */
+        .hardware-hero {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+        
+        .hardware-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            margin-bottom: 16px;
+            line-height: 1.2;
         }
         
         /* 响应式 */
-        @media (max-width: 768px) {
-            .hardware-showcase {
+        @media (max-width: 900px) {
+            .hardware-layout {
                 flex-direction: column;
+                gap: 30px;
             }
-            .gallery-controls {
+            .spec-list {
                 flex: 0 0 auto;
                 width: 100%;
             }
-            .gallery-display {
-                min-height: 300px;
+            .spec-preview {
+                min-height: 350px;
                 width: 100%;
+            }
+            .hardware-hero h1 {
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 导航栏（液态玻璃效果已在全局CSS中定义） -->
         <nav class="navbar">
             <a href="index.html">首页</a>
             <a href="system.html">系统设计</a>
@@ -116,93 +146,72 @@
             <a href="publications.html">论文</a>
         </nav>
 
-        <header class="page-header">
+        <!-- 唯一的居中大标题 -->
+        <div class="hardware-hero">
             <h1>硬件系统实现</h1>
-            <p class="subhead">电路 · 结构 · 实物</p>
-        </header>
+        </div>
 
-        <!-- 新增：左右分栏图片展示区（苹果风格切换） -->
-        <section class="section">
-            <h2 class="section-title">实拍与设计图</h2>
-            <div class="hardware-showcase">
-                <!-- 左侧按钮组 -->
-                <div class="gallery-controls">
-                    <button class="gallery-btn active" data-image="overall">
-                        整体系统
-                        <span class="btn-subtitle">天线、导轨与舵机全貌</span>
+        <!-- 左右分栏核心区域 -->
+        <div class="hardware-layout">
+            <!-- 左侧折叠选项 -->
+            <div class="spec-list">
+                <!-- 整体系统 -->
+                <div class="spec-item expanded" data-image="overall">
+                    <button class="spec-trigger">
+                        <span class="plus-icon">+</span>
+                        <span class="label">整体系统</span>
                     </button>
-                    <button class="gallery-btn" data-image="rail">
-                        导轨特写
-                        <span class="btn-subtitle">MGN12H 精密直线导轨</span>
-                    </button>
-                    <button class="gallery-btn" data-image="circuit">
-                        电路系统
-                        <span class="btn-subtitle">主控、驱动与射频前端</span>
-                    </button>
-                    <button class="gallery-btn" data-image="servo">
-                        舵机云台
-                        <span class="btn-subtitle">双轴舵机指向机构</span>
-                    </button>
+                    <div class="spec-content">
+                        天线、导轨与舵机全貌。发射天线固定于导轨一端，接收天线搭载于滑块，配合双轴舵机实现精确指向。
+                    </div>
                 </div>
-                
-                <!-- 右侧图片显示区 -->
-                <div class="gallery-display">
-                    <img id="gallery-main-image" class="gallery-image" src="assets/images/hardware-overall.jpg" alt="整体系统实物">
+                <!-- 导轨特写 -->
+                <div class="spec-item" data-image="rail">
+                    <button class="spec-trigger">
+                        <span class="plus-icon">+</span>
+                        <span class="label">精密导轨</span>
+                    </button>
+                    <div class="spec-content">
+                        MGN12H 直线导轨，行程300mm。滑块搭载接收天线，通过步进电机驱动实现大范围位置调整。
+                    </div>
                 </div>
-            </div>
-            <p class="caption">点击左侧按钮切换视图 — 导轨行程300mm，搭载发射/接收天线，舵机提供俯仰与方位微调。</p>
-        </section>
-
-        <!-- 电路原理图 -->
-        <section class="section">
-            <h2 class="section-title">电路设计</h2>
-            <div class="circuit-row">
-                <div>
-                    <h3>射频前端</h3>
-                    <img src="assets/images/circuit-rf.png" alt="射频前端电路图">
-                    <p>基于A7105/CC2500的2.4GHz收发链路，发射功率可调，接收带LNA与RSSI输出。</p>
+                <!-- 电路系统 -->
+                <div class="spec-item" data-image="circuit">
+                    <button class="spec-trigger">
+                        <span class="plus-icon">+</span>
+                        <span class="label">电路系统</span>
+                    </button>
+                    <div class="spec-content">
+                        STM32F103 主控、A7105 射频前端、A4988 电机驱动。集成信号采集、算法解算与运动控制。
+                    </div>
                 </div>
-                <div>
-                    <h3>主控单元</h3>
-                    <img src="assets/images/circuit-mcu.png" alt="主控电路图">
-                    <p>STM32F103C8T6最小系统，负责ADC采样、控制算法运算及PWM输出。</p>
+                <!-- 舵机云台 -->
+                <div class="spec-item" data-image="servo">
+                    <button class="spec-trigger">
+                        <span class="plus-icon">+</span>
+                        <span class="label">舵机云台</span>
+                    </button>
+                    <div class="spec-content">
+                        双轴 MG996R 舵机提供方位与俯仰微调。与导轨平移联动，实现“粗调＋精调”的复合指向。
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <!-- 机械结构 -->
-        <section class="section">
-            <h2 class="section-title">机械结构设计</h2>
-            <img src="assets/images/mechanical-cad.png" alt="三维爆炸视图" class="full-width-img">
-            <p class="caption">SolidWorks 设计的导轨滑块组件、天线支架与舵机云台一体化装配。</p>
-        </section>
+            <!-- 右侧大图预览区 -->
+            <div class="spec-preview">
+                <img id="previewImage" class="preview-image" src="assets/images/hardware-overall.jpg" alt="整体系统">
+            </div>
+        </div>
 
-        <!-- 关键器件清单 -->
-        <section class="section">
-            <h2 class="section-title">主要器件清单</h2>
-            <table class="data-table">
-                <tr><th>器件</th><th>型号/参数</th><th>数量</th></tr>
-                <tr><td>主控MCU</td><td>STM32F103C8T6</td><td>1</td></tr>
-                <tr><td>射频收发芯片</td><td>A7105 (2.4GHz)</td><td>2</td></tr>
-                <tr><td>舵机</td><td>MG996R (180°, 11kg·cm)</td><td>2</td></tr>
-                <tr><td>步进电机</td><td>42步进 + A4988驱动</td><td>1</td></tr>
-                <tr><td>直线导轨</td><td>MGN12H (300mm)</td><td>1</td></tr>
-                <tr><td>天线</td><td>2.4GHz 3dBi 胶棒天线</td><td>2</td></tr>
-            </table>
-        </section>
-
+        <!-- 极简页脚 -->
         <footer class="footer">
             <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
         </footer>
     </div>
-    
+
     <script>
-        // 图片切换交互逻辑（苹果风格）
         (function() {
-            const buttons = document.querySelectorAll('.gallery-btn');
-            const mainImage = document.getElementById('gallery-main-image');
-            
-            // 图片映射表：data-image 属性值 -> 实际图片路径
+            // 图片映射
             const imageMap = {
                 'overall': 'assets/images/hardware-overall.jpg',
                 'rail': 'assets/images/hardware-rail.jpg',
@@ -210,69 +219,85 @@
                 'servo': 'assets/images/hardware-servo.jpg'
             };
             
-            // 当前显示的图片元素（用于淡入淡出）
-            let currentImage = mainImage;
+            const previewImg = document.getElementById('previewImage');
+            const items = document.querySelectorAll('.spec-item');
             
-            function switchImage(imageKey, targetButton) {
-                if (!imageMap[imageKey]) return;
-                
-                // 更新按钮激活状态
-                buttons.forEach(btn => btn.classList.remove('active'));
-                targetButton.classList.add('active');
-                
-                // 创建新图片元素实现淡入效果
-                const newImage = new Image();
-                newImage.src = imageMap[imageKey];
-                newImage.alt = targetButton.textContent.trim().split('\n')[0];
-                newImage.className = 'gallery-image';
-                newImage.style.opacity = '0';
-                
-                newImage.onload = () => {
-                    // 将新图片添加到容器
-                    const container = mainImage.parentNode;
-                    container.appendChild(newImage);
-                    
-                    // 淡入新图片
-                    setTimeout(() => {
-                        newImage.style.transition = 'opacity 0.3s ease';
-                        newImage.style.opacity = '1';
-                    }, 10);
-                    
-                    // 移除旧图片
-                    if (currentImage && currentImage !== newImage) {
-                        currentImage.style.transition = 'opacity 0.2s ease';
-                        currentImage.style.opacity = '0';
-                        setTimeout(() => {
-                            if (currentImage.parentNode === container) {
-                                container.removeChild(currentImage);
-                            }
-                        }, 200);
-                    }
-                    
-                    // 更新当前图片引用
-                    currentImage = newImage;
-                    mainImage.id = ''; // 移除旧ID
-                    newImage.id = 'gallery-main-image';
-                };
-            }
-            
-            // 为每个按钮绑定点击事件
-            buttons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const imageKey = this.dataset.image;
-                    switchImage(imageKey, this);
-                });
-            });
-            
-            // 预加载其他图片，提升切换流畅度
+            // 预加载所有图片
             Object.values(imageMap).forEach(src => {
                 const img = new Image();
                 img.src = src;
             });
+            
+            // 切换图片（带淡入效果）
+            function switchImage(imageKey) {
+                const targetSrc = imageMap[imageKey];
+                if (!targetSrc) return;
+                
+                // 创建新图片实现淡入
+                const newImg = new Image();
+                newImg.src = targetSrc;
+                newImg.alt = previewImg.alt;
+                newImg.className = 'preview-image';
+                newImg.style.opacity = '0';
+                
+                newImg.onload = () => {
+                    const container = previewImg.parentNode;
+                    container.appendChild(newImg);
+                    
+                    requestAnimationFrame(() => {
+                        newImg.style.transition = 'opacity 0.3s ease';
+                        newImg.style.opacity = '1';
+                    });
+                    
+                    // 移除旧图
+                    if (previewImg && previewImg !== newImg) {
+                        previewImg.style.transition = 'opacity 0.2s ease';
+                        previewImg.style.opacity = '0';
+                        setTimeout(() => {
+                            if (previewImg.parentNode === container) {
+                                container.removeChild(previewImg);
+                            }
+                        }, 200);
+                    }
+                    
+                    // 更新全局引用（注意：原 previewImg 元素会被替换，需重新获取）
+                    document.getElementById('previewImage')?.removeAttribute('id');
+                    newImg.id = 'previewImage';
+                };
+            }
+            
+            // 处理折叠/展开与图片切换
+            items.forEach(item => {
+                const trigger = item.querySelector('.spec-trigger');
+                const imageKey = item.dataset.image;
+                
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    // 切换当前项的展开状态
+                    const isExpanded = item.classList.contains('expanded');
+                    
+                    // 收起其他所有项（可选：苹果风格通常允许同时展开多个，但这里为了简洁采用手风琴效果）
+                    items.forEach(i => i.classList.remove('expanded'));
+                    
+                    // 如果之前是收起的，则展开
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        // 切换右侧图片
+                        switchImage(imageKey);
+                    } else {
+                        // 如果点击已展开项，仅收起，图片可保持不变或切回默认？这里保持图片不变
+                        // 但为了体验，如果收起所有项，可以保留最后显示的图片
+                    }
+                });
+            });
+            
+            // 默认展开第一项（已通过 expanded 类处理）
+            // 确保右侧图片与第一项一致
         })();
     </script>
     
-    <!-- 引入原有的 main.js（保留滚动等效果） -->
+    <!-- 全局交互脚本（导航高亮、滚动吸附等） -->
     <script src="assets/js/main.js"></script>
 </body>
 </html>
