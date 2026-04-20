@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设计 · 双天线协同感知</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <a href="index.html">首页</a>
+            <a href="system.html" class="active">系统设计</a>
+            <a href="hardware.html">硬件实现</a>
+            <a href="experiments.html">实验测试</a>
+            <a href="publications.html">论文</a>
+        </nav>
+
+        <header class="page-header">
+            <h1>系统总体设计</h1>
+            <p class="subhead">架构 · 指标 · 方案论证</p>
+        </header>
+
+        <!-- 架构图 -->
+        <section class="section">
+            <h2 class="section-title">系统架构</h2>
+            <img src="assets/images/system-arch.png" alt="系统架构框图" class="full-width-img">
+            <p class="caption">系统由天线前端、射频收发链路、主控单元、运动执行机构四大部分构成，形成感知-决策-执行的闭环。</p>
+        </section>
+
+        <!-- 设计指标表 -->
+        <section class="section">
+            <h2 class="section-title">设计指标</h2>
+            <table class="data-table">
+                <tr><th>指标</th><th>参数</th><th>备注</th></tr>
+                <tr><td>感知范围</td><td>水平 0° ~ 180°</td><td>导轨行程可扩展</td></tr>
+                <tr><td>指向精度</td><td>≤ ±5°</td><td>静态测试均值</td></tr>
+                <tr><td>响应时间</td><td>≤ 1.0 s</td><td>从目标出现到对准</td></tr>
+                <tr><td>工作频率</td><td>2.4 GHz ISM</td><td>兼容无人机常用频段</td></tr>
+                <tr><td>控制周期</td><td>20 ms</td><td>舵机与电机更新率</td></tr>
+            </table>
+        </section>
+
+        <!-- 方案论证 (卡片式对比) -->
+        <section class="section">
+            <h2 class="section-title">关键技术方案论证</h2>
+            
+            <div class="comparison-block">
+                <h3>天线布局：收发分离 vs 收发共用</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <h4>收发共用</h4>
+                        <ul>
+                            <li>结构简单，单天线</li>
+                            <li>需要环形器或开关隔离</li>
+                            <li>收发信号相互干扰风险</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card highlight">
+                        <h4>✅ 收发分离（本方案）</h4>
+                        <ul>
+                            <li>发射固定，接收移动</li>
+                            <li>天然高隔离度</li>
+                            <li>接收天线可独立扫描优化</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-block">
+                <h3>运动机构：纯云台 vs 导轨+舵机复合</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <h4>纯双轴云台</h4>
+                        <ul>
+                            <li>成本高，维护复杂</li>
+                            <li>旋转关节易磨损</li>
+                            <li>位置固定不可平移</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card highlight">
+                        <h4>✅ 导轨+舵机复合（本方案）</h4>
+                        <ul>
+                            <li>平移分担旋转磨损</li>
+                            <li>大范围粗调+小范围精调</li>
+                            <li>部署灵活，行程可扩展</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工作流程图 -->
+        <section class="section">
+            <h2 class="section-title">工作流程</h2>
+            <img src="assets/images/workflow.png" alt="系统工作状态机" class="full-width-img">
+            <p class="caption">扫描搜索 → 信号峰值粗定位 → 舵机精对准 → 动态跟踪维持。</p>
+        </section>
+
+        <footer class="footer">
+            <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
+        </footer>
+    </div>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

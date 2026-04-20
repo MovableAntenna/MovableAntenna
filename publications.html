@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文与成果 · 双天线协同感知</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <a href="index.html">首页</a>
+            <a href="system.html">系统设计</a>
+            <a href="hardware.html">硬件实现</a>
+            <a href="experiments.html">实验测试</a>
+            <a href="publications.html" class="active">论文</a>
+        </nav>
+
+        <header class="page-header">
+            <h1>论文与成果</h1>
+            <p class="subhead">技术论文 · 团队 · 致谢</p>
+        </header>
+
+        <!-- 论文摘要卡片 -->
+        <section class="section">
+            <h2 class="section-title">技术论文摘要</h2>
+            <div class="paper-abstract">
+                <h3>基于导轨平移—舵机联动的双天线协同感知与指向跟踪系统</h3>
+                <p class="abstract-text">针对低空无人机目标的感知与指向跟踪需求，本文提出并实现了一种低成本、高可靠性的机电复合天线跟踪系统。系统采用“一维平移导轨+双轴舵机”的复合运动机构，将位置与姿态解耦控制，显著降低了旋转部件的磨损。感知端采用收发分离的双天线构型，接收天线在导轨上移动扫描，利用合成孔径思想实现高精度方向估计。本文完成了从射频前端、嵌入式控制算法到机械执行的全链路硬件闭环验证。实验结果表明，系统在180°范围内静态指向误差优于±5°，动态响应时间小于1秒，验证了方案的可行性与优越性。</p>
+                <p class="keywords"><strong>关键词：</strong>无人机感知；双天线；指向跟踪；导轨平移；嵌入式系统</p>
+            </div>
+        </section>
+
+        <!-- 下载区 -->
+        <section class="section">
+            <h2 class="section-title">论文下载</h2>
+            <div class="download-card">
+                <div class="download-info">
+                    <span class="file-icon">📄</span>
+                    <span>技术论文（中文，PDF）</span>
+                </div>
+                <a href="files/paper.pdf" class="btn btn-primary" target="_blank">下载 PDF</a>
+            </div>
+            <p style="margin-top: 20px;">或在线预览：</p>
+            <embed src="files/paper.pdf" type="application/pdf" width="100%" height="600px" style="border-radius: 18px; border: 1px solid #e5e5e7;">
+        </section>
+
+        <!-- 团队成员 (竞赛封面外信息，此处可展示) -->
+        <section class="section">
+            <h2 class="section-title">团队成员</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">👤</div>
+                    <h4>张 三</h4>
+                    <p>系统架构 · 算法设计</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">👤</div>
+                    <h4>李 四</h4>
+                    <p>硬件电路 · 嵌入式开发</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">👤</div>
+                    <h4>王 五</h4>
+                    <p>机械结构 · 实验测试</p>
+                </div>
+            </div>
+            <p class="caption">指导教师：赵六 教授</p>
+        </section>
+
+        <!-- 相关成果 (若有) -->
+        <section class="section">
+            <h2 class="section-title">相关成果</h2>
+            <ul class="achievement-list">
+                <li>第二十一届中国研究生电子设计竞赛 —— 技术论文</li>
+                <li>已申请发明专利：《一种基于导轨平移的无人机天线跟踪系统及方法》（申请号：2026xxxxxx）</li>
+                <li>软件著作权：《双天线协同感知嵌入式控制软件 V1.0》</li>
+            </ul>
+        </section>
+
+        <footer class="footer">
+            <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
+        </footer>
+    </div>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

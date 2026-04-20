@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验测试 · 双天线协同感知</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <a href="index.html">首页</a>
+            <a href="system.html">系统设计</a>
+            <a href="hardware.html">硬件实现</a>
+            <a href="experiments.html" class="active">实验测试</a>
+            <a href="publications.html">论文</a>
+        </nav>
+
+        <header class="page-header">
+            <h1>系统测试与分析</h1>
+            <p class="subhead">精度 · 响应 · 动态跟踪</p>
+        </header>
+
+        <!-- 测试环境 -->
+        <section class="section">
+            <h2 class="section-title">测试环境</h2>
+            <img src="assets/images/test-env.jpg" alt="测试场地" class="full-width-img">
+            <p class="caption">室内测试场地，导轨固定于实验台，无人机模拟目标悬挂于可移动支架。</p>
+        </section>
+
+        <!-- 静态指向精度 -->
+        <section class="section">
+            <h2 class="section-title">静态指向精度</h2>
+            <table class="data-table">
+                <tr><th>设定角度 (°)</th><th>实测角度 (°)</th><th>绝对误差 (°)</th></tr>
+                <tr><td>0</td><td>1.2</td><td>1.2</td></tr>
+                <tr><td>30</td><td>32.5</td><td>2.5</td></tr>
+                <tr><td>60</td><td>58.1</td><td>1.9</td></tr>
+                <tr><td>90</td><td>93.8</td><td>3.8</td></tr>
+                <tr><td>120</td><td>117.4</td><td>2.6</td></tr>
+                <tr><td>150</td><td>153.2</td><td>3.2</td></tr>
+                <tr><td>180</td><td>177.9</td><td>2.1</td></tr>
+            </table>
+            <p class="caption">平均误差 2.47°，最大误差 3.8°，满足设计指标。</p>
+            <img src="assets/images/error-bar.png" alt="误差分布柱状图" class="full-width-img" style="margin-top: 24px;">
+        </section>
+
+        <!-- 动态跟踪测试 -->
+        <section class="section">
+            <h2 class="section-title">动态跟踪性能</h2>
+            <div class="split-content">
+                <div>
+                    <h3>阶跃响应</h3>
+                    <img src="assets/images/step-response.png" alt="阶跃响应曲线">
+                    <p>目标位置突变时，天线指向在0.8s内完成调节，超调量小于10%。</p>
+                </div>
+                <div>
+                    <h3>轨迹跟踪</h3>
+                    <img src="assets/images/trajectory.png" alt="跟踪轨迹对比">
+                    <p>无人机慢速横向移动，天线跟随轨迹与真实轨迹基本吻合。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 测试视频 (第二个视频) -->
+        <section class="section">
+            <h2 class="section-title">跟踪过程实录</h2>
+            <div class="video-wrapper">
+                <iframe src="//player.bilibili.com/player.html?bvid=BV1xx411x7y&page=1" 
+                        scrolling="no" border="0" frameborder="no" framespacing="0" 
+                        allowfullscreen="true" class="video-iframe">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- 结果分析 -->
+        <section class="section">
+            <h2 class="section-title">误差分析与讨论</h2>
+            <p>主要误差来源：舵机齿轮回差（约1.5°）、RSSI信号抖动、机械装配间隙。后续可通过引入角度反馈（如磁编码器）进一步提升精度。整体性能已满足竞赛演示需求。</p>
+        </section>
+
+        <footer class="footer">
+            <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
+        </footer>
+    </div>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

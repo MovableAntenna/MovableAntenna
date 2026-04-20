@@ -1,1 +1,122 @@
-<!DOCTYPE html><html><body><h1>Hello, GitHub Pages!</h1></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双天线协同感知 · 无人机指向跟踪系统</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- model-viewer 用于3D交互展示 -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <a href="index.html" class="active">首页</a>
+            <a href="system.html">系统设计</a>
+            <a href="hardware.html">硬件实现</a>
+            <a href="experiments.html">实验测试</a>
+            <a href="publications.html">论文</a>
+        </nav>
+
+        <!-- Hero 区域 -->
+        <header class="hero">
+            <h1>平移 · 感知 · 追踪</h1>
+            <p class="subhead">基于导轨平移—舵机联动的双天线协同感知与指向跟踪系统</p>
+            <p class="hero-desc">低成本、高可靠、全闭环的无人机射频感知解决方案。以结构创新打破纯旋转云台的局限，用合成孔径思想实现高精度测向。</p>
+        </header>
+
+        <!-- 3D 模型展示区 (如无模型，可暂时隐藏或替换为静态图) -->
+        <div class="model-container">
+            <model-viewer 
+                src="assets/models/antenna.glb" 
+                alt="天线系统三维模型" 
+                camera-controls 
+                auto-rotate 
+                environment-image="neutral"
+                shadow-intensity="0.8"
+                exposure="1.2"
+                style="width: 100%; height: 100%;">
+            </model-viewer>
+            <p class="model-caption">可拖拽旋转 · 滚轮缩放 · 双指操作</p>
+        </div>
+
+        <!-- 核心亮点卡片 (3项创新) -->
+        <section class="section">
+            <h2 class="section-title">核心创新</h2>
+            <div class="card-grid three-col">
+                <div class="card glass">
+                    <div class="card-icon">📐</div>
+                    <h3>结构创新</h3>
+                    <p>一维平移导轨 + 双轴舵机云台。将位置与姿态解耦控制，用平移分担旋转磨损，大幅提升系统可靠性与部署灵活性。</p>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">📡</div>
+                    <h3>方法创新</h3>
+                    <p>收发分离双天线构型，接收天线在导轨上扫描形成合成孔径。无需昂贵天线阵列，以移动换取高精度方向感知。</p>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">⚙️</div>
+                    <h3>系统闭环</h3>
+                    <p>从射频感知、信号处理、嵌入式控制到机械执行的全链路硬件闭环验证。真正的“自感知·自指向”系统。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关键优势 (四象限) -->
+        <section class="section">
+            <h2 class="section-title">为什么选择这套方案</h2>
+            <div class="card-grid four-col">
+                <div class="feature-item">
+                    <span class="feature-value">↓ 90%</span>
+                    <span class="feature-label">硬件成本</span>
+                    <p class="feature-desc">相比相控阵与精密云台，仅需普通导轨、舵机与两根天线。</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-value">≤ 5°</span>
+                    <span class="feature-label">静态指向误差</span>
+                    <p class="feature-desc">合成孔径测向精度媲美小型阵列，满足大多数跟踪场景。</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-value">&lt; 1s</span>
+                    <span class="feature-label">响应时间</span>
+                    <p class="feature-desc">从目标出现到天线对准，快速进入跟踪状态。</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-value">全天候</span>
+                    <span class="feature-label">无GPS依赖</span>
+                    <p class="feature-desc">纯射频感知，不依赖通信链路，适应复杂电磁环境。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 演示视频 -->
+        <section class="section">
+            <h2 class="section-title">动态跟踪演示</h2>
+            <div class="video-wrapper">
+                <!-- 替换为你的B站/YouTube嵌入代码 -->
+                <iframe src="//player.bilibili.com/player.html?bvid=BV1xx411x7x&page=1" 
+                        scrolling="no" border="0" frameborder="no" framespacing="0" 
+                        allowfullscreen="true" class="video-iframe">
+                </iframe>
+            </div>
+            <p class="caption">天线实时跟随无人机移动，平移台粗调范围，舵机精调指向。</p>
+        </section>
+
+        <!-- 快速入口 -->
+        <div class="button-group">
+            <a href="files/paper.pdf" class="btn btn-primary" target="_blank">📄 下载技术论文</a>
+            <a href="https://github.com/你的用户名/MovableAntenna" class="btn btn-secondary" target="_blank">💻 GitHub 源码</a>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
+            <p class="footer-small">© 2026 天线感知与指向团队</p>
+            <!-- 访客统计徽章 (可选) -->
+            <img src="https://visitor-badge.laobi.icu/badge?page_id=你的用户名.MovableAntenna" alt="访客" style="margin-top: 16px;">
+        </footer>
+    </div>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
