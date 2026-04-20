@@ -1,4 +1,4 @@
-/* ===== 苹果风格极简样式表 ===== */
+/* ===== 苹果风格极简样式表（含液态玻璃导航） ===== */
 :root {
     --primary: #0071e3;
     --primary-hover: #0077ed;
@@ -31,14 +31,38 @@ body {
     padding: 20px 0;
 }
 
-/* ===== 导航栏 ===== */
+/* ===== 导航栏（液态玻璃效果） ===== */
 .navbar {
     display: flex;
     justify-content: center;
     gap: 40px;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--border-light);
+    padding: 16px 30px;
     margin-bottom: 40px;
+    
+    /* 液态玻璃核心属性 */
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    
+    /* 圆润边缘 */
+    border-radius: 60px;
+    
+    /* 轻微边框增加层次感 */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    /* 阴影让导航栏浮起 */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    
+    /* 固定在顶部，始终悬浮 */
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+    
+    /* 宽度自适应居中 */
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    
     flex-wrap: wrap;
 }
 
@@ -48,7 +72,7 @@ body {
     font-weight: 500;
     font-size: 1rem;
     transition: var(--transition);
-    padding-bottom: 4px;
+    padding: 8px 4px;
     border-bottom: 2px solid transparent;
 }
 
@@ -110,7 +134,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* ===== 标题 ===== */
+/* ===== 区块 ===== */
 .section {
     margin: 80px 0;
 }
@@ -499,6 +523,8 @@ img {
     }
     .navbar {
         gap: 20px;
+        padding: 12px 20px;
+        top: 12px;
     }
     .model-container {
         height: 350px;
