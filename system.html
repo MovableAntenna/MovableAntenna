@@ -24,6 +24,14 @@
         
         .phase-item {
             border-bottom: 1px solid rgba(0,0,0,0.06);
+            border-left: 4px solid transparent;      /* 预留左边框位置 */
+            transition: border-left-color 0.25s ease;
+            padding-left: 16px;                       /* 为边框留出空间 */
+            margin-left: -20px;                       /* 抵消padding造成的整体偏移，保持文字对齐 */
+        }
+        
+        .phase-item.expanded {
+            border-left-color: var(--primary);        /* 展开时蓝色左边框 */
         }
         
         .phase-trigger {
