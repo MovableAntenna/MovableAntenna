@@ -5,6 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>硬件实现 · 双天线协同感知</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* 硬件页特有的左右分栏布局样式 */
+        .hardware-showcase {
+            display: flex;
+            gap: 40px;
+            margin: 40px 0;
+            align-items: flex-start;
+        }
+        
+        .gallery-controls {
+            flex: 0 0 240px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .gallery-btn {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 18px 20px;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        
+        .gallery-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border-color: var(--primary);
+        }
+        
+        .gallery-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0,113,227,0.2);
+        }
+        
+        .gallery-btn .btn-subtitle {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        
+        .gallery-btn.active .btn-subtitle {
+            opacity: 0.9;
+        }
+        
+        .gallery-display {
+            flex: 1;
+            min-height: 450px;
+            background: var(--bg-light);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .gallery-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 16px;
+            transition: opacity 0.3s ease;
+            opacity: 1;
+        }
+        
+        .gallery-image.fade-out {
+            opacity: 0;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hardware-showcase {
+                flex-direction: column;
+            }
+            .gallery-controls {
+                flex: 0 0 auto;
+                width: 100%;
+            }
+            .gallery-display {
+                min-height: 300px;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -21,16 +121,36 @@
             <p class="subhead">电路 · 结构 · 实物</p>
         </header>
 
-        <!-- 实物照片画廊 -->
+        <!-- 新增：左右分栏图片展示区（苹果风格切换） -->
         <section class="section">
-            <h2 class="section-title">实物展示</h2>
-            <div class="image-gallery">
-                <img src="assets/images/hardware-overall.jpg" alt="整体系统实物">
-                <img src="assets/images/hardware-rail.jpg" alt="导轨与天线特写">
-                <img src="assets/images/hardware-circuit.jpg" alt="主控与驱动电路">
-                <img src="assets/images/hardware-servo.jpg" alt="舵机云台细节">
+            <h2 class="section-title">实拍与设计图</h2>
+            <div class="hardware-showcase">
+                <!-- 左侧按钮组 -->
+                <div class="gallery-controls">
+                    <button class="gallery-btn active" data-image="overall">
+                        整体系统
+                        <span class="btn-subtitle">天线、导轨与舵机全貌</span>
+                    </button>
+                    <button class="gallery-btn" data-image="rail">
+                        导轨特写
+                        <span class="btn-subtitle">MGN12H 精密直线导轨</span>
+                    </button>
+                    <button class="gallery-btn" data-image="circuit">
+                        电路系统
+                        <span class="btn-subtitle">主控、驱动与射频前端</span>
+                    </button>
+                    <button class="gallery-btn" data-image="servo">
+                        舵机云台
+                        <span class="btn-subtitle">双轴舵机指向机构</span>
+                    </button>
+                </div>
+                
+                <!-- 右侧图片显示区 -->
+                <div class="gallery-display">
+                    <img id="gallery-main-image" class="gallery-image" src="assets/images/hardware-overall.jpg" alt="整体系统实物">
+                </div>
             </div>
-            <p class="caption">导轨行程300mm，搭载发射/接收天线，舵机提供俯仰与方位微调。</p>
+            <p class="caption">点击左侧按钮切换视图 — 导轨行程300mm，搭载发射/接收天线，舵机提供俯仰与方位微调。</p>
         </section>
 
         <!-- 电路原理图 -->
@@ -75,6 +195,84 @@
             <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
         </footer>
     </div>
+    
+    <script>
+        // 图片切换交互逻辑（苹果风格）
+        (function() {
+            const buttons = document.querySelectorAll('.gallery-btn');
+            const mainImage = document.getElementById('gallery-main-image');
+            
+            // 图片映射表：data-image 属性值 -> 实际图片路径
+            const imageMap = {
+                'overall': 'assets/images/hardware-overall.jpg',
+                'rail': 'assets/images/hardware-rail.jpg',
+                'circuit': 'assets/images/hardware-circuit.jpg',
+                'servo': 'assets/images/hardware-servo.jpg'
+            };
+            
+            // 当前显示的图片元素（用于淡入淡出）
+            let currentImage = mainImage;
+            
+            function switchImage(imageKey, targetButton) {
+                if (!imageMap[imageKey]) return;
+                
+                // 更新按钮激活状态
+                buttons.forEach(btn => btn.classList.remove('active'));
+                targetButton.classList.add('active');
+                
+                // 创建新图片元素实现淡入效果
+                const newImage = new Image();
+                newImage.src = imageMap[imageKey];
+                newImage.alt = targetButton.textContent.trim().split('\n')[0];
+                newImage.className = 'gallery-image';
+                newImage.style.opacity = '0';
+                
+                newImage.onload = () => {
+                    // 将新图片添加到容器
+                    const container = mainImage.parentNode;
+                    container.appendChild(newImage);
+                    
+                    // 淡入新图片
+                    setTimeout(() => {
+                        newImage.style.transition = 'opacity 0.3s ease';
+                        newImage.style.opacity = '1';
+                    }, 10);
+                    
+                    // 移除旧图片
+                    if (currentImage && currentImage !== newImage) {
+                        currentImage.style.transition = 'opacity 0.2s ease';
+                        currentImage.style.opacity = '0';
+                        setTimeout(() => {
+                            if (currentImage.parentNode === container) {
+                                container.removeChild(currentImage);
+                            }
+                        }, 200);
+                    }
+                    
+                    // 更新当前图片引用
+                    currentImage = newImage;
+                    mainImage.id = ''; // 移除旧ID
+                    newImage.id = 'gallery-main-image';
+                };
+            }
+            
+            // 为每个按钮绑定点击事件
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const imageKey = this.dataset.image;
+                    switchImage(imageKey, this);
+                });
+            });
+            
+            // 预加载其他图片，提升切换流畅度
+            Object.values(imageMap).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        })();
+    </script>
+    
+    <!-- 引入原有的 main.js（保留滚动等效果） -->
     <script src="assets/js/main.js"></script>
 </body>
 </html>
