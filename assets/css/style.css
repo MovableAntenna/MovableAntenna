@@ -533,3 +533,37 @@ img {
         font-size: 2rem;
     }
 }
+
+/* ===== 滚动吸附效果（苹果风格段落锁定） ===== */
+html {
+    scroll-snap-type: y mandatory;      /* 垂直方向强制吸附 */
+    scroll-behavior: smooth;            /* 平滑滚动（浏览器原生） */
+}
+
+/* 每个主要区块都作为吸附起点 */
+.section,
+.page-header,
+.hero {
+    scroll-snap-align: start;           /* 吸附到区块顶部 */
+    scroll-snap-stop: always;           /* 强制停在该点，不跳过 */
+}
+
+/* 为了让吸附更舒适，给每个区块一点内边距防止内容紧贴顶部 */
+.section {
+    padding-top: 20px;
+    margin-top: 0;
+}
+
+/* 导航栏因为 sticky 会遮挡一点吸附后的内容，调整 scroll-margin 留出空间 */
+.section,
+.page-header,
+.hero {
+    scroll-margin-top: 80px;            /* 避开 sticky 导航栏的高度 */
+}
+
+/* 可选：为吸附过程增加一点弹性/阻尼感（纯视觉） */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
