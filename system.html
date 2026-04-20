@@ -6,207 +6,145 @@
     <title>系统设计 · 双天线协同感知</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* 系统设计页专属样式：闭环流程图 + 右侧详情 */
-        .system-container {
+        /* 系统设计页特有样式：左右分栏、折叠卡片、三个阶段 */
+        .system-layout {
             display: flex;
-            gap: 50px;
-            margin: 40px 0 60px;
+            gap: 60px;
+            margin: 60px 0 80px;
             align-items: flex-start;
         }
-
-        /* 左侧流程图区域：固定宽度，保持稳定 */
-        .flowchart-wrapper {
-            flex: 0 0 480px;
-            position: sticky;
-            top: 100px;
-            align-self: flex-start;
-        }
-
-        .flowchart-title {
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            margin-bottom: 30px;
-            color: var(--text-primary);
-        }
-
-        /* 闭环流程图网格 */
-        .flowchart {
+        
+        /* 左侧阶段列表 */
+        .phase-list {
+            flex: 0 0 320px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            background: rgba(255,255,255,0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 30px 20px;
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.02);
+            gap: 2px;
         }
-
-        .flow-row {
+        
+        .phase-item {
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        
+        .phase-trigger {
             display: flex;
             align-items: center;
-            justify-content: space-around;
-        }
-
-        .flow-node {
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 20px;
-            padding: 16px 18px;
-            min-width: 140px;
-            text-align: center;
+            gap: 16px;
+            padding: 20px 0;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-            position: relative;
-        }
-
-        .flow-node:hover {
-            background: rgba(255,255,255,0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
-            border-color: var(--primary);
-        }
-
-        .flow-node.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0,113,227,0.2);
-        }
-
-        .flow-node.active .node-name,
-        .flow-node.active .node-plus {
-            color: white;
-        }
-
-        .node-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .node-plus {
-            font-size: 1.4rem;
-            font-weight: 300;
-            color: var(--text-secondary);
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .flow-node.active .node-plus {
-            transform: rotate(45deg);
-        }
-
-        /* 连线与箭头 */
-        .flow-arrow {
-            display: flex;
-            align-items: center;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            font-weight: 200;
-            padding: 0 8px;
-        }
-
-        .flow-arrow span {
-            font-size: 0.8rem;
-            margin: 0 6px;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            white-space: nowrap;
-        }
-
-        .arrow-down {
-            flex-direction: column;
-            margin: 4px 0;
-        }
-
-        /* 右侧详情面板 */
-        .detail-panel {
-            flex: 1;
-            min-height: 500px;
-            background: rgba(255,255,255,0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.02);
-            transition: all 0.3s ease;
-        }
-
-        .detail-content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        }
-
-        .detail-content.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .detail-image {
+            background: transparent;
+            border: none;
             width: 100%;
-            border-radius: 20px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            text-align: left;
         }
-
-        .detail-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            letter-spacing: -0.01em;
+        
+        .phase-trigger:hover {
+            color: var(--primary);
         }
-
-        .detail-desc {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            font-size: 1.05rem;
-        }
-
-        .detail-placeholder {
+        
+        /* 图标圆圈 */
+        .icon-circle {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            min-height: 400px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.04);
             color: var(--text-secondary);
+            font-size: 1.6rem;
+            font-weight: 300;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+        }
+        
+        .phase-item.expanded .icon-circle {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .phase-trigger .label {
+            flex: 1;
+        }
+        
+        .phase-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+            padding-left: 48px;  /* 32px圆圈 + 16px间距 */
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .phase-item.expanded .phase-content {
+            max-height: 300px;   /* 足够容纳描述文字 */
+            padding-bottom: 20px;
+        }
+        
+        /* 右侧图片预览区 */
+        .phase-preview {
+            flex: 1;
+            min-height: 550px;
+            background: #fafafa;
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 20px;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 大标题 */
+        .system-hero {
             text-align: center;
+            padding: 40px 0 20px;
         }
-
-        .detail-placeholder .icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
+        
+        .system-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            margin-bottom: 16px;
+            line-height: 1.2;
         }
-
+        
         /* 响应式 */
-        @media (max-width: 1000px) {
-            .system-container {
+        @media (max-width: 900px) {
+            .system-layout {
                 flex-direction: column;
+                gap: 30px;
             }
-            .flowchart-wrapper {
+            .phase-list {
                 flex: 0 0 auto;
                 width: 100%;
-                position: static;
             }
-            .detail-panel {
+            .phase-preview {
+                min-height: 350px;
                 width: 100%;
+            }
+            .system-hero h1 {
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 导航栏 -->
+        <!-- 导航栏（液态玻璃效果） -->
         <nav class="navbar">
             <a href="index.html">首页</a>
             <a href="system.html" class="active">系统设计</a>
@@ -215,138 +153,54 @@
             <a href="publications.html">论文</a>
         </nav>
 
-        <!-- 主内容区：左右分栏 -->
-        <div class="system-container">
-            <!-- 左侧闭环流程图 -->
-            <div class="flowchart-wrapper">
-                <h2 class="flowchart-title">闭环感知·指向流程</h2>
-                <div class="flowchart">
-                    <!-- 第一行：发射天线 → 无人机目标 → 接收天线 -->
-                    <div class="flow-row">
-                        <div class="flow-node" data-node="tx">
-                            <span class="node-name">发射天线</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                        <div class="flow-arrow">
-                            <span>射频照射</span> →
-                        </div>
-                        <div class="flow-node" data-node="drone" style="background: rgba(0,113,227,0.05);">
-                            <span class="node-name">无人机目标</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                        <div class="flow-arrow">
-                            → <span>回波</span>
-                        </div>
-                        <div class="flow-node" data-node="rx">
-                            <span class="node-name">接收天线</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                    </div>
+        <!-- 居中大标题 -->
+        <div class="system-hero">
+            <h1>系统工作流程</h1>
+        </div>
 
-                    <!-- 垂直向下箭头 -->
-                    <div class="flow-row arrow-down">
-                        <div class="flow-arrow">↓ <span>RSSI / 相位</span> ↓</div>
-                    </div>
-
-                    <!-- 第二行：信号处理单元 -->
-                    <div class="flow-row">
-                        <div class="flow-node" data-node="signal">
-                            <span class="node-name">信号处理单元</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                        <div class="flow-arrow">
-                            → <span>方向解算结果</span> →
-                        </div>
-                        <div class="flow-node" data-node="mcu">
-                            <span class="node-name">主控制器</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                    </div>
-
-                    <!-- 垂直向下箭头 -->
-                    <div class="flow-row arrow-down">
-                        <div class="flow-arrow">↓ <span>PWM / 脉冲控制</span> ↓</div>
-                    </div>
-
-                    <!-- 第三行：执行机构 -->
-                    <div class="flow-row">
-                        <div class="flow-node" data-node="rail">
-                            <span class="node-name">平移导轨</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                        <div class="flow-arrow">
-                            <span>位置反馈</span> ←
-                        </div>
-                        <div class="flow-node" data-node="servo">
-                            <span class="node-name">舵机云台</span>
-                            <span class="node-plus">+</span>
-                        </div>
-                    </div>
-
-                    <!-- 闭环回路箭头：从执行机构回到接收天线 -->
-                    <div class="flow-row" style="margin-top: 10px;">
-                        <div class="flow-arrow" style="font-size: 1rem;">
-                            ↑ <span>天线位置/指向调整 (闭环反馈)</span> ↑
-                        </div>
-                    </div>
-                    <div class="flow-row">
-                        <div style="width: 100%; text-align: center; color: var(--text-secondary); font-size: 0.9rem; padding: 8px;">
-                            ⥁ 接收天线随滑块移动并调整舵机角度，持续跟踪目标 ⥁
-                        </div>
+        <!-- 左右分栏核心区域 -->
+        <div class="system-layout">
+            <!-- 左侧阶段列表（三个） -->
+            <div class="phase-list">
+                <!-- 阶段 1：扫描感知 -->
+                <div class="phase-item" data-phase="scan">
+                    <button class="phase-trigger">
+                        <span class="icon-circle">+</span>
+                        <span class="label">1. 扫描感知</span>
+                    </button>
+                    <div class="phase-content">
+                        发射天线持续照射目标区域，接收天线在导轨上往复移动，采集不同位置的RSSI信号强度，形成空间扫描数据。
                     </div>
                 </div>
-                <p class="caption" style="margin-top: 16px;">点击任意节点查看详细设计</p>
+                <!-- 阶段 2：捕获定位 -->
+                <div class="phase-item" data-phase="capture">
+                    <button class="phase-trigger">
+                        <span class="icon-circle">+</span>
+                        <span class="label">2. 捕获定位</span>
+                    </button>
+                    <div class="phase-content">
+                        嵌入式处理器对RSSI序列进行峰值搜索与滤波，解算出无人机目标的初始方位角，驱动导轨滑块移动至对应区域。
+                    </div>
+                </div>
+                <!-- 阶段 3：跟踪对准 -->
+                <div class="phase-item" data-phase="track">
+                    <button class="phase-trigger">
+                        <span class="icon-circle">+</span>
+                        <span class="label">3. 跟踪对准</span>
+                    </button>
+                    <div class="phase-content">
+                        双轴舵机云台根据实时信号强度进行微调，补偿导轨定位误差与目标移动，实现高精度持续指向跟踪，形成闭环锁定。
+                    </div>
+                </div>
             </div>
 
-            <!-- 右侧详情展示区 -->
-            <div class="detail-panel" id="detailPanel">
-                <!-- 默认占位符 -->
-                <div class="detail-placeholder" id="placeholder">
-                    <div class="icon">📡</div>
-                    <h3 style="margin-bottom: 12px;">选择左侧节点</h3>
-                    <p>点击任意硬件模块查看仿真设计与说明</p>
-                </div>
-
-                <!-- 各节点详情内容（默认隐藏） -->
-                <div class="detail-content" id="detail-tx">
-                    <img class="detail-image" src="assets/images/sim-tx-antenna.png" alt="发射天线仿真">
-                    <h3 class="detail-title">发射天线</h3>
-                    <p class="detail-desc">2.4GHz 定向天线，固定于导轨一端。通过射频前端产生连续波或调制信号照射无人机目标。仿真显示天线方向图与驻波比优化结果，确保能量高效辐射。</p>
-                </div>
-                <div class="detail-content" id="detail-drone">
-                    <img class="detail-image" src="assets/images/sim-drone-target.png" alt="无人机目标散射仿真">
-                    <h3 class="detail-title">无人机目标</h3>
-                    <p class="detail-desc">低空旋翼无人机作为雷达散射截面（RCS）目标。通过电磁仿真分析不同姿态下的回波特性，为信号处理算法提供先验模型。</p>
-                </div>
-                <div class="detail-content" id="detail-rx">
-                    <img class="detail-image" src="assets/images/sim-rx-antenna.png" alt="接收天线仿真">
-                    <h3 class="detail-title">接收天线</h3>
-                    <p class="detail-desc">移动式接收天线，安装于导轨滑块。通过扫描不同位置采集RSSI序列，利用合成孔径原理实现高精度方向估计。仿真验证了不同位置下的接收灵敏度。</p>
-                </div>
-                <div class="detail-content" id="detail-signal">
-                    <img class="detail-image" src="assets/images/sim-signal-processing.png" alt="信号处理仿真">
-                    <h3 class="detail-title">信号处理单元</h3>
-                    <p class="detail-desc">基于STM32的嵌入式信号处理模块。对RSSI信号进行滑动平均滤波与峰值搜索，实时解算目标方位角。算法仿真展示了在不同信噪比下的测向精度。</p>
-                </div>
-                <div class="detail-content" id="detail-mcu">
-                    <img class="detail-image" src="assets/images/sim-mcu-control.png" alt="主控制器仿真">
-                    <h3 class="detail-title">主控制器</h3>
-                    <p class="detail-desc">STM32F103C8T6 运行控制决策算法，融合方向解算结果与编码器反馈，输出PWM驱动导轨电机与舵机。控制回路仿真验证了系统稳定性与响应时间。</p>
-                </div>
-                <div class="detail-content" id="detail-rail">
-                    <img class="detail-image" src="assets/images/sim-rail.png" alt="平移导轨仿真">
-                    <h3 class="detail-title">平移导轨</h3>
-                    <p class="detail-desc">MGN12H 直线导轨 + 42步进电机。接收主控制器脉冲指令，带动接收天线沿导轨移动，实现大范围粗定位。运动学仿真确保速度与位置精度。</p>
-                </div>
-                <div class="detail-content" id="detail-servo">
-                    <img class="detail-image" src="assets/images/sim-servo.png" alt="舵机云台仿真">
-                    <h3 class="detail-title">舵机云台</h3>
-                    <p class="detail-desc">双轴MG996R舵机提供方位与俯仰微调。与导轨平移联动，补偿粗定位误差，实现精准指向。仿真验证了角度控制分辨率与动态响应。</p>
-                </div>
+            <!-- 右侧大图预览区 -->
+            <div class="phase-preview">
+                <img id="previewImage" class="preview-image" src="assets/images/phase-scan.png" alt="扫描感知示意图">
             </div>
         </div>
 
-        <!-- 页脚 -->
+        <!-- 极简页脚 -->
         <footer class="footer">
             <p>第二十一届中国研究生电子设计竞赛 · 参赛作品</p>
         </footer>
@@ -354,69 +208,110 @@
 
     <script>
         (function() {
-            // 节点与详情面板交互
-            const nodes = document.querySelectorAll('.flow-node');
-            const detailContents = document.querySelectorAll('.detail-content');
-            const placeholder = document.getElementById('placeholder');
-            
-            // 当前激活的节点
-            let activeNode = null;
+            // ---------- 阶段图片映射（三个图） ----------
+            const imageMap = {
+                'scan': 'assets/images/phase-scan.png',      // 扫描感知示意图
+                'capture': 'assets/images/phase-capture.png', // 捕获定位示意图
+                'track': 'assets/images/phase-track.png'      // 跟踪对准示意图
+            };
 
-            // 隐藏所有详情，显示占位符
-            function hideAllDetails() {
-                detailContents.forEach(content => content.classList.remove('active'));
-                placeholder.style.display = 'flex';
-            }
+            const previewContainer = document.querySelector('.phase-preview');
+            const previewImg = document.getElementById('previewImage');
+            const items = document.querySelectorAll('.phase-item');
 
-            // 显示指定节点的详情
-            function showDetail(nodeId) {
-                hideAllDetails();
-                placeholder.style.display = 'none';
-                const targetDetail = document.getElementById(`detail-${nodeId}`);
-                if (targetDetail) {
-                    targetDetail.classList.add('active');
-                }
-            }
+            // 预加载所有图片
+            Object.values(imageMap).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
 
-            // 移除所有节点的active状态
-            function deactivateAllNodes() {
-                nodes.forEach(node => node.classList.remove('active'));
-            }
+            // 切换图片（淡入淡出）
+            function switchImage(phaseKey) {
+                const targetSrc = imageMap[phaseKey];
+                if (!targetSrc) return;
 
-            // 为每个节点绑定点击事件
-            nodes.forEach(node => {
-                node.addEventListener('click', function(e) {
-                    const nodeId = this.dataset.node;
-                    if (!nodeId) return;
+                const newImg = new Image();
+                newImg.src = targetSrc;
+                newImg.alt = '系统阶段示意图';
+                newImg.className = 'preview-image';
+                newImg.style.opacity = '0';
 
-                    // 切换active状态：如果点击的是已激活节点，则取消激活并显示占位符
-                    if (this.classList.contains('active')) {
-                        deactivateAllNodes();
-                        hideAllDetails();
-                        activeNode = null;
-                    } else {
-                        deactivateAllNodes();
-                        this.classList.add('active');
-                        showDetail(nodeId);
-                        activeNode = this;
+                newImg.onload = () => {
+                    previewContainer.appendChild(newImg);
+                    requestAnimationFrame(() => {
+                        newImg.style.transition = 'opacity 0.3s ease';
+                        newImg.style.opacity = '1';
+                    });
+
+                    // 移除旧图
+                    const oldImg = previewContainer.querySelector('#previewImage');
+                    if (oldImg && oldImg !== newImg) {
+                        oldImg.style.transition = 'opacity 0.2s ease';
+                        oldImg.style.opacity = '0';
+                        setTimeout(() => {
+                            if (oldImg.parentNode === previewContainer) {
+                                previewContainer.removeChild(oldImg);
+                            }
+                        }, 200);
                     }
+                    newImg.id = 'previewImage';
+                };
+            }
+
+            // 更新所有图标（+ / −）
+            function updateAllIcons() {
+                items.forEach(item => {
+                    const icon = item.querySelector('.icon-circle');
+                    if (icon) {
+                        icon.textContent = item.classList.contains('expanded') ? '−' : '+';
+                    }
+                });
+            }
+
+            // 收起其他项（手风琴效果）
+            function collapseOthers(currentItem) {
+                items.forEach(item => {
+                    if (item !== currentItem && item.classList.contains('expanded')) {
+                        item.classList.remove('expanded');
+                    }
+                });
+            }
+
+            // 绑定点击事件
+            items.forEach(item => {
+                const trigger = item.querySelector('.phase-trigger');
+                trigger.addEventListener('click', () => {
+                    const isExpanded = item.classList.contains('expanded');
+                    const phaseKey = item.dataset.phase;
+
+                    // 收起其他项
+                    collapseOthers(item);
+
+                    // 切换当前项
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        if (phaseKey) switchImage(phaseKey);
+                    } else {
+                        item.classList.remove('expanded');
+                        // 收起时图片保持不动
+                    }
+
+                    updateAllIcons();
                 });
             });
 
-            // 默认不选中任何节点，显示占位符（保持干净）
-            hideAllDetails();
-
-            // 可选：如果希望默认展开某个节点（如发射天线），取消下面注释
-            // const defaultNode = document.querySelector('[data-node="tx"]');
-            // if(defaultNode) {
-            //     defaultNode.classList.add('active');
-            //     showDetail('tx');
-            //     placeholder.style.display = 'none';
-            // }
+            // 初始化：默认展开第一阶段（扫描感知）
+            const firstItem = items[0];
+            if (firstItem) {
+                items.forEach(item => item.classList.remove('expanded'));
+                firstItem.classList.add('expanded');
+                updateAllIcons();
+                const firstKey = firstItem.dataset.phase;
+                if (firstKey) switchImage(firstKey);
+            }
         })();
     </script>
     
-    <!-- 全局脚本 -->
     <script src="assets/js/main.js"></script>
 </body>
 </html>
