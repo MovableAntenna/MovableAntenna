@@ -29,7 +29,7 @@
         .spec-trigger {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             padding: 18px 0;
             font-size: 1.3rem;
             font-weight: 500;
@@ -46,18 +46,25 @@
             color: var(--primary);
         }
         
-        .spec-trigger .plus-icon {
-            font-size: 1.8rem;
-            font-weight: 300;
-            color: var(--text-secondary);
-            transition: transform 0.3s ease;
+        /* 图标容器：加号/减号 + 圆圈 */
+        .icon-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 28px;
-            text-align: center;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            font-weight: 300;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
         }
         
-        .spec-item.expanded .plus-icon {
-            transform: rotate(45deg);
-            color: var(--primary);
+        .spec-item.expanded .icon-circle {
+            background: var(--primary);
+            color: white;
         }
         
         .spec-trigger .label {
@@ -67,15 +74,15 @@
         .spec-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.33, 1, 0.68, 1);
-            padding-left: 40px;
+            transition: max-height 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+            padding-left: 44px;  /* 28px圆圈 + 16px间距 */
             color: var(--text-secondary);
             font-size: 1rem;
             line-height: 1.6;
         }
         
         .spec-item.expanded .spec-content {
-            max-height: 150px;  /* 足够容纳描述文字 */
+            max-height: 150px;  /* 根据内容调整，若文字较多可改为200px */
             padding-bottom: 16px;
         }
         
@@ -156,7 +163,7 @@
             <!-- 左侧折叠选项 -->
             <div class="spec-list">
                 <!-- 整体系统 -->
-                <div class="spec-item expanded" data-image="overall">
+                <div class="spec-item" data-image="overall">
                     <button class="spec-trigger">
                         <span class="icon-circle">+</span>
                         <span class="label">整体系统</span>
@@ -210,137 +217,116 @@
     </div>
 
     <script>
-       (function() {
-    // ---------- 图片映射 ----------
-    const imageMap = {
-        'overall': 'assets/images/hardware-overall.jpg',
-        'rail': 'assets/images/hardware-rail.jpg',
-        'circuit': 'assets/images/hardware-circuit.jpg',
-        'servo': 'assets/images/hardware-servo.jpg'
-    };
+        (function() {
+            // ---------- 图片映射 ----------
+            const imageMap = {
+                'overall': 'assets/images/hardware-overall.jpg',
+                'rail': 'assets/images/hardware-rail.jpg',
+                'circuit': 'assets/images/hardware-circuit.jpg',
+                'servo': 'assets/images/hardware-servo.jpg'
+            };
 
-    // 获取预览图容器与初始图片元素
-    const previewContainer = document.querySelector('.spec-preview');
-    let currentPreviewImg = document.getElementById('previewImage');
-    const items = document.querySelectorAll('.spec-item');
+            // 获取 DOM 元素
+            const previewContainer = document.querySelector('.spec-preview');
+            const previewImg = document.getElementById('previewImage');
+            const items = document.querySelectorAll('.spec-item');
 
-    // ---------- 预加载所有图片 ----------
-    Object.values(imageMap).forEach(src => {
-        const img = new Image();
-        img.src = src;
-    });
-
-    /**
-     * 切换右侧预览图（淡入淡出）
-     * @param {string} imageKey - 对应 imageMap 的键
-     */
-    function switchImage(imageKey) {
-        const targetSrc = imageMap[imageKey];
-        if (!targetSrc) return;
-
-        // 创建新图片元素
-        const newImg = new Image();
-        newImg.src = targetSrc;
-        newImg.alt = '硬件预览图';
-        newImg.className = 'preview-image';
-        newImg.style.opacity = '0';
-
-        newImg.onload = () => {
-            // 将新图片加入容器
-            previewContainer.appendChild(newImg);
-
-            // 触发重绘后淡入
-            requestAnimationFrame(() => {
-                newImg.style.transition = 'opacity 0.3s ease';
-                newImg.style.opacity = '1';
+            // 预加载图片
+            Object.values(imageMap).forEach(src => {
+                const img = new Image();
+                img.src = src;
             });
 
-            // 淡出并移除旧图片（如果存在且不是同一张）
-            if (currentPreviewImg && currentPreviewImg !== newImg) {
-                currentPreviewImg.style.transition = 'opacity 0.2s ease';
-                currentPreviewImg.style.opacity = '0';
-                setTimeout(() => {
-                    if (currentPreviewImg.parentNode === previewContainer) {
-                        previewContainer.removeChild(currentPreviewImg);
+            // 切换图片（淡入淡出）
+            function switchImage(imageKey) {
+                const targetSrc = imageMap[imageKey];
+                if (!targetSrc) return;
+
+                const newImg = new Image();
+                newImg.src = targetSrc;
+                newImg.alt = '硬件预览图';
+                newImg.className = 'preview-image';
+                newImg.style.opacity = '0';
+
+                newImg.onload = () => {
+                    previewContainer.appendChild(newImg);
+                    requestAnimationFrame(() => {
+                        newImg.style.transition = 'opacity 0.3s ease';
+                        newImg.style.opacity = '1';
+                    });
+
+                    // 移除旧图
+                    const oldImg = previewContainer.querySelector('#previewImage');
+                    if (oldImg && oldImg !== newImg) {
+                        oldImg.style.transition = 'opacity 0.2s ease';
+                        oldImg.style.opacity = '0';
+                        setTimeout(() => {
+                            if (oldImg.parentNode === previewContainer) {
+                                previewContainer.removeChild(oldImg);
+                            }
+                        }, 200);
                     }
-                }, 200);
+
+                    newImg.id = 'previewImage';
+                };
             }
 
-            // 更新当前图片引用，并设置 id 方便后续查找（但不再依赖 id）
-            if (currentPreviewImg) currentPreviewImg.id = '';
-            newImg.id = 'previewImage';
-            currentPreviewImg = newImg;
-        };
-
-        // 处理图片加载失败的情况（静默回退，保留原图）
-        newImg.onerror = () => {
-            console.warn(`图片加载失败: ${targetSrc}`);
-            // 不移除原图，不做更改
-        };
-    }
-
-    /**
-     * 更新单个项的图标符号
-     * @param {HTMLElement} item 
-     */
-    function updateIcon(item) {
-        const icon = item.querySelector('.icon-circle');
-        if (icon) {
-            icon.textContent = item.classList.contains('expanded') ? '−' : '+';
-        }
-    }
-
-    /**
-     * 更新所有项的图标（用于初始化或批量操作）
-     */
-    function updateAllIcons() {
-        items.forEach(item => updateIcon(item));
-    }
-
-    // ---------- 绑定点击事件 ----------
-    items.forEach(item => {
-        const trigger = item.querySelector('.spec-trigger');
-        if (!trigger) return;
-
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-
-            // 切换当前项的展开/折叠状态
-            item.classList.toggle('expanded');
-            
-            // 更新当前项的图标
-            updateIcon(item);
-
-            // 如果展开，则切换右侧图片
-            if (item.classList.contains('expanded')) {
-                const imageKey = item.dataset.image;
-                if (imageKey) {
-                    switchImage(imageKey);
-                }
+            // 更新所有图标
+            function updateAllIcons() {
+                items.forEach(item => {
+                    const icon = item.querySelector('.icon-circle');
+                    if (icon) {
+                        icon.textContent = item.classList.contains('expanded') ? '−' : '+';
+                    }
+                });
             }
-            // 如果折叠，图片保持不变（保留最后显示的图片）
-        });
-    });
 
-    // ---------- 初始化：默认展开第一项，并显示对应图片 ----------
-    if (items.length > 0) {
-        // 清除所有可能残留的 expanded 类
-        items.forEach(item => item.classList.remove('expanded'));
-        
-        const firstItem = items[0];
-        firstItem.classList.add('expanded');
-        updateAllIcons();
-        
-        const firstImageKey = firstItem.dataset.image;
-        if (firstImageKey) {
-            // 确保图片容器中至少有一个预览图（如果HTML中已有默认图片则替换）
-            switchImage(firstImageKey);
-        }
-    }
-})();
+            // 收起其他展开项
+            function collapseOthers(currentItem) {
+                items.forEach(item => {
+                    if (item !== currentItem && item.classList.contains('expanded')) {
+                        item.classList.remove('expanded');
+                    }
+                });
+            }
+
+            // 绑定点击事件
+            items.forEach(item => {
+                const trigger = item.querySelector('.spec-trigger');
+                trigger.addEventListener('click', () => {
+                    const isExpanded = item.classList.contains('expanded');
+                    const imageKey = item.dataset.image;
+
+                    // 先收起其他项（手风琴效果）
+                    collapseOthers(item);
+
+                    // 切换当前项
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        if (imageKey) switchImage(imageKey);
+                    } else {
+                        item.classList.remove('expanded');
+                        // 收起时图片保持不变
+                    }
+
+                    updateAllIcons();
+                });
+            });
+
+            // 初始化：默认展开第一项
+            const firstItem = items[0];
+            if (firstItem) {
+                // 清除可能已有的 expanded 类
+                items.forEach(item => item.classList.remove('expanded'));
+                firstItem.classList.add('expanded');
+                updateAllIcons();
+                const firstKey = firstItem.dataset.image;
+                if (firstKey) switchImage(firstKey);
+            }
+        })();
     </script>
     
-    <!-- 全局交互脚本（导航高亮、滚动吸附等） -->
+    <!-- 全局交互脚本 -->
     <script src="assets/js/main.js"></script>
 </body>
 </html>
